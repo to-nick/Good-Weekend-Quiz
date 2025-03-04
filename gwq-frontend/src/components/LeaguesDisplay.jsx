@@ -8,32 +8,33 @@ function LeaguesDisplay() {
     const [fetchError, setfetchError] = useState(false);
 
 
-    const { userDetails } = useContext(AuthContext)
+    const { userDetails, handleExpiredJWT } = useContext(AuthContext)
     const token = sessionStorage.getItem("token");
 
     const fetchLeagues = async () => {
 
         try{
-        const response = await fetch(`http://localhost:5010/profile/display-leagues?userId=${userDetails.id}`, {
-            method: 'GET',
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json"
+            const response = await fetch(`http://localhost:5010/profile/display-leagues?userId=${userDetails.id}`, {
+                method: 'GET',
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+            const data = await response.json();
+
+            console.log(data);
+
+            if(!response.ok){
+                throw new Error(data.message)
             }
-        });
-        const data = await response.json();
 
-        console.log(data);
-
-        if(!response.ok){
-            throw new Error(`HTTP error! Status: ${response.status}`)
-        }
-
-        setfetchError(false);
-        setLeagueDetials(data);
+            setfetchError(false);
+            setLeagueDetials(data);
         } catch(error){
-            setfetchError(true)
-            console.error("fetch error:", error)
+            setfetchError(true);
+            console.error("fetch error:", error);
+            handleExpiredJWT(error);
         }
     }
 

@@ -1,5 +1,5 @@
 import homeLogo from '../assets/images/home-image-removebg-preview.png';
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate, Link} from 'react-router-dom';
 import { AuthContext } from '../components/AuthContext';
 import { Eye, EyeOff } from "lucide-react";
@@ -10,9 +10,18 @@ function Home (){
     const [loginFailed, setLoginFailed] = useState(false);
     const [responseMessage, setResponseMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [logoutMessage, setLogoutMessage] = useState('');
 
     const navigate = useNavigate();
     const { login } = useContext(AuthContext);
+
+    useEffect(() => {
+        const message = sessionStorage.getItem("logoutMessage");
+        
+        if(message){
+            setLogoutMessage(message);
+        }
+    })
 
 
     const handleChange = (event) => {
@@ -24,33 +33,39 @@ function Home (){
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        
-        const response = await fetch('http://localhost:5010/users/login', {
+
+        try{
+            const response = await fetch('http://localhost:5010/users/login', {
             method: 'POST',
             headers: {'Content-Type': 'application/json' },
             body: JSON.stringify(
                 formData)
-        })
+            })
 
-        const data = await response.json();
-        console.log(data);
-        const token = data.token;
+            const data = await response.json();
+            console.log(data);
+            const token = data.token;
 
-        const userDetails = {name: data.name, email: data.email, id: data.id};
+            const userDetails = {name: data.name, email: data.email, id: data.id};
 
 
-        if (!response.ok){
-            setResponseMessage(data.message)
-            setLoginFailed(true);
-        } else if (response.ok){
-            login(token, userDetails);
-            navigate('/profile');
+            if (!response.ok){
+                setResponseMessage(data.message)
+                setLoginFailed(true);
+                throw new Error (data.message);
+            } else if (response.ok){
+                login(token, userDetails);
+                navigate('/profile');
+            }
+        } catch (error){
+            console.log('There was an error logging in:', error.message)
         }
     }
 
 
     return(
         <div className="page-container">
+            {logoutMessage ? <p className='session-expired-message'>{logoutMessage}</p> : null}
             <div className="home-image-container">
                 <img src={homeLogo} alt="The Good Weekend Quiz Logo" />
             </div>

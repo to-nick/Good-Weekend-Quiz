@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useContext, useState } from 'react';
 import { AuthContext } from './AuthContext';
+import Logo from '../assets/images/q-high-resolution-logo-removebg-preview.png';
 
 function Navbar(){
 
@@ -9,16 +10,12 @@ function Navbar(){
     const { isLoggedIn, logout } = useContext(AuthContext);
 
     const activateHamburgerMenu = () => {
-        if(navIsActive === false){
-            setNavIsActive(true)
-        } else if(navIsActive === true){
-            setNavIsActive(false)
-        }
+        setNavIsActive(prevState => !prevState)
     }
 
     return(
         <nav className="navbar">
-            <h2><Link className="nav-logo" to="/profile">GWQ</Link></h2>
+            <Link to="/profile"><img className="nav-logo" src={Logo}></img></Link>
             <ul onClick={activateHamburgerMenu} className={`nav-items ${navIsActive ? "active" : ""}`}>
                 { isLoggedIn ? 
                 <>

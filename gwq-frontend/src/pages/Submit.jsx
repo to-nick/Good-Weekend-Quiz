@@ -72,7 +72,7 @@ function Submit(){
     const [submitSuccess, setSubmitSuccess] = useState(false);
     const [responseMessage, setResponseMessage] = useState('');
 
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, handleExpiredJWT } = useContext(AuthContext);
     const token = sessionStorage.getItem("token");
 
     useEffect(() => {
@@ -124,30 +124,36 @@ function Submit(){
     const submitScore = async (event) => {
         event.preventDefault();
 
-        const response = await fetch('http://localhost:5010/data/submit-score', {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json"
-            },
-            body:  JSON.stringify(submissionDetails)
+        try{
+            const response = await fetch('http://localhost:5010/data/submit-score', {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body:  JSON.stringify(submissionDetails)
+                }
+            );
+
+            const data = await response.json()
+
+            if(!response.ok){
+                setSubmitError(true)
+                setErrorResponse(data.message)
+                throw new Error(data.message)
+            } else if(response.ok){
+                setErrorResponse(false)
+                setResponseMessage(data.message);
+                setSubmitSuccess(true);
+
             }
-        );
-
-        const data = await response.json()
-
-        if(!response.ok){
-            setSubmitError(true)
-            setErrorResponse(data.message)
-        } else if(response.ok){
-            setErrorResponse(false)
-            setResponseMessage(data.message);
-            setSubmitSuccess(true);
-
+            console.log(data);
+        } catch(error){
+            console.error(error.message);
+            handleExpiredJWT(error);
+            
+            
         }
-        console.log(data);
-        
-
     };
 
     console.log(submissionDetails)

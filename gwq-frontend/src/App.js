@@ -15,19 +15,19 @@ import Footer from './components/Footer.jsx';
 function App() {
   return (
     <div className="App">
-      <AuthProvider>
         <BrowserRouter>
-          <Navbar />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/submit" element={<Submit />} />
-              <Route path="/Leaderboard" element={<Leaderboard />} />
-            </Routes>
-          <Footer />
+          <AuthProvider>
+            <Navbar />
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/submit" element={<Submit />} />
+                <Route path="/Leaderboard" element={<Leaderboard />} />
+              </Routes>
+            <Footer />
+            </AuthProvider>
         </BrowserRouter>
-      </AuthProvider>
     </div>
   );
 }

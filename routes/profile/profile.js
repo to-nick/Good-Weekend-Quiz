@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const authorisation = require('../../middleware/authorisation');
 
 //create league POST route
-router.post('/create-league', async function (req, res, next){
+router.post('/create-league', authorisation, async function (req, res, next){
     const name = req.body.leagueName;
     const userId = req.body.createdBy;
 
@@ -81,7 +82,7 @@ router.post('/create-league', async function (req, res, next){
 
 //JOIN LEAGUE ROUTE
 
-router.post('/join-league', async function(req, res, next){
+router.post('/join-league', authorisation, async function(req, res, next){
     const leagueId = req.body.leagueId;
     const userId = req.body.userId
 
@@ -142,7 +143,7 @@ router.post('/join-league', async function(req, res, next){
 
 //Display Leagues Route
 
-router.get('/display-leagues', async function(req, res, next){
+router.get('/display-leagues', authorisation, async function(req, res, next){
     const userId = req.query.userId;
     
     try{

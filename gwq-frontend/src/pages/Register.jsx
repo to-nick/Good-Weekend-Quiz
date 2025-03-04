@@ -26,28 +26,32 @@ function Register (){
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        
-        const response = await fetch('http://localhost:5010/users/register', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json' },
-            body: JSON.stringify(
-                formData)
-        })
 
-        const data = await response.json();
-        
+        try{
+            const response = await fetch('http://localhost:5010/users/register', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json' },
+                body: JSON.stringify(
+                    formData)
+            })
 
-        if (!response.ok){
-            setResponseMessage(data.message)
-            setLoginFailed(true);
-        } else if (response.ok){
-            console.log(data);
-            setRegistrationOk(true);
-            setRegistrationMessage(data.message);
-            setTimeout(() => {
-                navigate('/')
-            }, 2000);
-            ;
+            const data = await response.json();
+            
+
+            if (!response.ok){
+                setResponseMessage(data.message)
+                setLoginFailed(true);
+                throw new Error(data.message);
+            } else if (response.ok){
+                console.log(data);
+                setRegistrationOk(true);
+                setRegistrationMessage(data.message);
+                setTimeout(() => {
+                    navigate('/')
+                }, 2000);
+            }
+        }catch (error){
+            console.log("There was an error registering the user:", error.message)
         }
     }
 

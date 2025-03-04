@@ -10,7 +10,7 @@ function CreateLeague () {
     const [leagueFailMessage, setLeagueFailMessage] = useState('')
     const token = sessionStorage.getItem("token");
 
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, handleExpiredJWT } = useContext(AuthContext);
 
     useEffect(() => {
         if(userDetails.id){
@@ -30,31 +30,39 @@ function CreateLeague () {
 
     console.log(leagueDetails);
 
+    
     const createNewLeague = async (event) => {
         event.preventDefault();
-        const response = await fetch('http://localhost:5010/profile/create-league', {
-            method: 'POST',
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                'Content-Type': 'application/json' 
-            },
-            body: JSON.stringify(
-                leagueDetails
-            )
-        });
-        
-        const data = await response.json();
+        try{
+            const response = await fetch('http://localhost:5010/profile/create-league', {
+                method: 'POST',
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify(
+                    leagueDetails
+                )
+            });
+            
+            const data = await response.json();
 
-        if(!response.ok){
-            setLeagueFailMessage(data.message)
-            setCreationFailed(true);
-        }
-        else if(response.ok){
-            setLeagueID(data.leagueID)
-            setCreationFailed(false)
-        }
+            if(!response.ok){
+                setLeagueFailMessage(data.message)
+                setCreationFailed(true);
+                throw new Error(data.message);
+                
+            }
+            else if(response.ok){
+                setLeagueID(data.leagueID)
+                setCreationFailed(false)
+            }
 
-        console.log(data);
+            console.log(data);
+        } catch (error){
+        console.log("Error while creating league:", error.message)
+        handleExpiredJWT(error);
+        }
     }
 
     return(

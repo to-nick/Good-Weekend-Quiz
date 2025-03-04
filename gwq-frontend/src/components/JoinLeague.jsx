@@ -9,7 +9,7 @@ function JoinLeague(){
     const [responseMessage, setResponseMessage] = useState('');
     const [joinSuccess, setJoinSuccess] = useState(false);
 
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, handleExpiredJWT } = useContext(AuthContext);
     const token = sessionStorage.getItem("token");
 
     useEffect(() => {
@@ -33,33 +33,39 @@ function JoinLeague(){
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const response = await fetch('http://localhost:5010/profile/join-league', {
-            method: 'POST',
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(
-                joinDetails
-            )
-        });
+        try{
+            const response = await fetch('http://localhost:5010/profile/join-league', {
+                method: 'POST',
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(
+                    joinDetails
+                )
+            });
 
-        const data = await response.json();
+            const data = await response.json();
 
-        if(!response.ok){
-            setJoinLeaguefailed(true);
-            setJoinSuccess(false);
-            setResponseMessage(data.message);
-        } else if(response.ok){
-            setJoinSuccess(true);
-            setJoinLeaguefailed(false);
-            setResponseMessage(data.message);
+            if(!response.ok){
+                setJoinLeaguefailed(true);
+                setJoinSuccess(false);
+                setResponseMessage(data.message);
+                throw new Error(data.message)
+            } else if(response.ok){
+                setJoinSuccess(true);
+                setJoinLeaguefailed(false);
+                setResponseMessage(data.message);
+            }
+
+            setJoinDetails((prevDetails) => ({
+                ...prevDetails,
+                leagueId: ''
+            }));
+        } catch(error){
+            console.log("There was an error joining the league:", error.message)
+            handleExpiredJWT(error);
         }
-
-        setJoinDetails((prevDetails) => ({
-            ...prevDetails,
-            leagueId: ''
-        }));
     }
 
 

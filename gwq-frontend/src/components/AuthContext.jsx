@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 
 
 export const AuthContext = createContext();
@@ -7,6 +8,8 @@ export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userDetails, setUserDetails] = useState({});
     const [loading, setLoading] = useState(true);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const token = sessionStorage.getItem("token");
@@ -26,7 +29,8 @@ export const AuthProvider = ({ children }) => {
 
     const login = (token, user) => {
         sessionStorage.setItem("token", token);
-        sessionStorage.setItem("user", JSON.stringify(user))
+        sessionStorage.setItem("user", JSON.stringify(user));
+        sessionStorage.removeItem("logoutMessage");
         setUserDetails(user)
         setIsLoggedIn(true);
     };
@@ -38,8 +42,18 @@ export const AuthProvider = ({ children }) => {
         setIsLoggedIn(false);
     };
 
+    const handleExpiredJWT = (error) => {
+        console.error("Fetch Error:", error)
+
+        if(error.message.includes('JWT has expired')){
+            sessionStorage.setItem("logoutMessage", "Your session has expired. Please log in again to continue.")
+            logout();
+            navigate('/');
+        }
+    }
+
     return (
-        <AuthContext.Provider value={{ userDetails, isLoggedIn, login, logout}} >
+        <AuthContext.Provider value={{ userDetails, isLoggedIn, login, logout, handleExpiredJWT}} >
             {children}
         </AuthContext.Provider>
     )

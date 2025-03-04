@@ -12,7 +12,7 @@ function Leaderboard (){
     const [selectedFormat, setSelectedFormat] = useState('Total Score');
     const [highestScore, setHighestScore] = useState({});
 
-    const { userDetails } = useContext(AuthContext);
+    const { userDetails, handleExpiredJWT } = useContext(AuthContext);
     const token = sessionStorage.getItem('token')
 
     try{
@@ -26,6 +26,10 @@ function Leaderboard (){
         }) 
         const playerLeagues = await leaguesQuery.json();
 
+            if(playerLeagues.length < 1){
+                throw new Error (playerLeagues.message)
+            }
+
             console.log(playerLeagues);
             setLeagues(playerLeagues);
         }
@@ -36,7 +40,7 @@ function Leaderboard (){
 
     } catch(error){
         console.log('failed to fetch leagues:', error.message)
-
+        handleExpiredJWT(error);
     }
 
 
@@ -59,13 +63,16 @@ function Leaderboard (){
                     "Content-Type": "application/json"
                 }
             });
+
+            if(!leagueDataQuery.ok){
+                throw new Error(leagueDataQuery.message)
+            }
             
             const data = await leagueDataQuery.json();
             console.log(data);
             const scores = data.combinedScores;
-            console.log(scores);
+            
             const highScore = data.highScore[0];
-            console.log(highScore);
             setHighestScore(highScore);
             setScoreData(scores);
         }
@@ -79,10 +86,9 @@ function Leaderboard (){
         console.log(scoreData);
             
     } catch(error){
-        console.log('Failed to fetch leaderboard')
-        if(error.message === 'JWT has expired'){
-            navigate('/')
-        }
+        console.log('Failed to fetch leaderboard:', error.message);
+        handleExpiredJWT(error);
+        
     }
 
     const sortedScores = [...scoreData].sort((a, b) => {
@@ -101,8 +107,16 @@ function Leaderboard (){
                     <div className='dropdown-and-table-container'>
                         <div className='dropdown-container'>
                             <select className='dropdown' onChange={handleLeagueChange}>
-                                <option value='' >--Select a league--</option>
-                                {leagues.map((league, index) => <option key={index} value={league.id}>{league.league_name}</option>)}
+                                {leagues.length > 0 ? (
+                                    <>
+                                        <option value='' >--Select a league--</option> 
+                                        {leagues.map((league, index) => {
+                                            return <option key={index} value={league.id}>{league.league_name}</option>
+                                        })}
+                                    </>
+                                )
+                                    : 
+                                    <option value='' >--Select a league--</option> }
                             </select>
                             <select className="dropdown" onChange={(handleFormatChange)}>
                                 <option value={'Total Score'}>Total Score</option>
@@ -127,6 +141,7 @@ function Leaderboard (){
                                             })}
                                     </tbody>
                             </table>
+                            {leagues.length > 0 ? null : <p className='join-league-warning'>You must join or create a league to display the leaderboard</p>}
                     </div>
                     <div className='highscore-container'>
                         <h2>Highest single score of 2024:</h2>

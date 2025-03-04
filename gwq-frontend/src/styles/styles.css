@@ -78,10 +78,7 @@
 .nav-logo{
     font-size: clamp(2.5rem, 4vw, 4rem);
     align-items: center;
-    height: 100%;
-    padding: 1rem;
-    text-decoration: none;
-    color: black; 
+    height: 5rem;
 }
 
 .nav-items{
@@ -298,6 +295,18 @@
 
 .link-to-signin{
     font-size: clamp(1rem, 2vw, 2.5rem);
+}
+
+.session-expired-message{
+    font-size: clamp(1rem, 2vw, 3rem);
+    text-align: center;
+    width: 80%;
+    position: absolute;
+    margin: 1rem;
+    padding: 1rem;
+    background-color: orange;
+    border: black 2px solid;
+    border-radius: 20px;
 }
 
 @media(max-width: 1500px){
@@ -845,6 +854,12 @@
 
 #leaderboard-table-head tr{
     background-color: rgb(123, 121, 121);
+}
+
+.join-league-warning{
+    font-size: clamp(1rem, 2vw, 3rem);
+    padding: 2rem;
+    text-align: center;
 }
 
 .highscore-container{
