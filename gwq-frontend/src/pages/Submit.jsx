@@ -12,7 +12,7 @@ function Submit(){
             name: ""
         });
 
-    const [weeks, setWeeks] = useState([
+    const weeks = [
         "Sat Jan 04 2025 - Fri Jan 10 2025",
         "Sat Jan 11 2025 - Fri Jan 17 2025",
         "Sat Jan 18 2025 - Fri Jan 24 2025",
@@ -65,7 +65,7 @@ function Submit(){
         "Sat Dec 13 2025 - Fri Dec 19 2025",
         "Sat Dec 20 2025 - Fri Dec 26 2025",
         "Sat Dec 27 2025 - Fri Jan 02 2026"
-      ]);
+      ];
 
     const [submitError, setSubmitError] = useState(false);
     const [errorResponse, setErrorResponse] = useState('');
@@ -112,7 +112,7 @@ function Submit(){
             week: period
         }));
     }
-    }, [weeks]);
+    }, []);
 
     const handleChange = (event) => {
         setSubmissionDetails((prevDetails) => ({

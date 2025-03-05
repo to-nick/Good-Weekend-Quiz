@@ -21,7 +21,7 @@ function Home (){
         if(message){
             setLogoutMessage(message);
         }
-    })
+    }, [])
 
 
     const handleChange = (event) => {
