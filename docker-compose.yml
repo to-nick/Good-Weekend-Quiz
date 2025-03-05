@@ -9,8 +9,8 @@ services:
       - backend
 
   backend:
-    build: .
+    build: ./gwq-backend
     ports:
       - "5010:5010"
     env_file:
-      - .env
+      - ./gwq-backend/.env
