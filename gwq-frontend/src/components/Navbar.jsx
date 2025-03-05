@@ -15,7 +15,7 @@ function Navbar(){
 
     return(
         <nav className="navbar">
-            <Link to="/profile"><img className="nav-logo" src={Logo}></img></Link>
+            <Link to="/profile"><img alt="GWQ Logo" className="nav-logo" src={Logo}></img></Link>
             <ul onClick={activateHamburgerMenu} className={`nav-items ${navIsActive ? "active" : ""}`}>
                 { isLoggedIn ? 
                 <>

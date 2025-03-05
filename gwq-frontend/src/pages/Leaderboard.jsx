@@ -1,10 +1,7 @@
-import { useState, useEffect, useContext} from 'react';
+import { useState, useEffect, useContext, useCallback} from 'react';
 import { AuthContext } from '../components/AuthContext';
-import { useNavigate } from 'react-router-dom';
 
 function Leaderboard (){
-
-    const navigate = useNavigate();
 
     const [leagues, setLeagues] = useState([]);
     const [selectedLeague, setSelectedLeague] = useState();
@@ -15,33 +12,33 @@ function Leaderboard (){
     const { userDetails, handleExpiredJWT } = useContext(AuthContext);
     const token = sessionStorage.getItem('token')
 
-    try{
-        const fetchLeagues = async () => {
-        const leaguesQuery = await fetch(`http://localhost:5010/profile/display-leagues?userId=${userDetails.id}`, {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json"
-            }
-        }) 
-        const playerLeagues = await leaguesQuery.json();
 
-            if(playerLeagues.length < 1){
-                throw new Error (playerLeagues.message)
-            }
+    const fetchLeagues = useCallback(async () => {
+        try{
+            const leaguesQuery = await fetch(`http://localhost:5010/profile/display-leagues?userId=${userDetails.id}`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            }) 
+            const playerLeagues = await leaguesQuery.json();
 
-            console.log(playerLeagues);
-            setLeagues(playerLeagues);
+                if(playerLeagues.length < 1){
+                    throw new Error (playerLeagues.message)
+                }
+
+                console.log(playerLeagues);
+                setLeagues(playerLeagues);
+        } catch(error){
+            console.log('failed to fetch leagues:', error.message)
+            handleExpiredJWT(error);
         }
+    }, [userDetails.id, handleExpiredJWT, token])
 
-        useEffect(() => {
-            fetchLeagues()
-        }, [userDetails.id])
-
-    } catch(error){
-        console.log('failed to fetch leagues:', error.message)
-        handleExpiredJWT(error);
-    }
+    useEffect(() => {
+        fetchLeagues()
+    }, [fetchLeagues, userDetails.id])
 
 
 
@@ -53,9 +50,8 @@ function Leaderboard (){
         setSelectedFormat(event.target.value)
     }
 
-
-    try{
-        const fetchLeagueData = async () => {
+    const fetchLeagueData = useCallback(async () => {
+        try{
             const leagueDataQuery = await fetch(`http://localhost:5010/data/scores?leagueId=${selectedLeague}`, {
                 method: "GET",
                 headers: {
@@ -75,21 +71,21 @@ function Leaderboard (){
             const highScore = data.highScore[0];
             setHighestScore(highScore);
             setScoreData(scores);
+        } catch(error){
+            console.log('Failed to fetch leaderboard:', error.message);
+            handleExpiredJWT(error);
         }
-
-        useEffect(() =>{
-            if(selectedLeague){
-                fetchLeagueData()
-            }
-            },[selectedLeague])
+    }, [selectedLeague, token, handleExpiredJWT])
 
         console.log(scoreData);
             
-    } catch(error){
-        console.log('Failed to fetch leaderboard:', error.message);
-        handleExpiredJWT(error);
-        
-    }
+    
+
+    useEffect(() =>{
+        if(selectedLeague){
+            fetchLeagueData()
+        }
+        },[fetchLeagueData, selectedLeague])
 
     const sortedScores = [...scoreData].sort((a, b) => {
         const aScore = selectedFormat === 'Total Score' ? a.totalScore : a.weeklyWins;
