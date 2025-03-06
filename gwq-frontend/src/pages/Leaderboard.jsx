@@ -12,9 +12,9 @@ function Leaderboard (){
     const { userDetails, handleExpiredJWT } = useContext(AuthContext);
     const token = sessionStorage.getItem('token')
 
+    const backendHost = process.env.REACT_APP_BACKEND_HOST;
 
     const fetchLeagues = useCallback(async () => {
-        const backendHost = process.env.REACT_APP_BACKEND_HOST;
         try{
             const leaguesQuery = await fetch(`${backendHost}/profile/display-leagues?userId=${userDetails.id}`, {
                 method: "GET",
@@ -53,7 +53,7 @@ function Leaderboard (){
 
     const fetchLeagueData = useCallback(async () => {
         try{
-            const leagueDataQuery = await fetch(`http://localhost:5010/data/scores?leagueId=${selectedLeague}`, {
+            const leagueDataQuery = await fetch(`${backendHost}/data/scores?leagueId=${selectedLeague}`, {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
