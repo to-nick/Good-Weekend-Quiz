@@ -24,11 +24,17 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const allowedOrigins = 'http://localhost:3000'
+const allowedOrigins = ['https://good-weekend-quiz-frontend.onrender.com' ,'http://localhost:3000']
 
 const corsOptions = {
-  origin: allowedOrigins,
-  methods: "GET, PUT, POST, DELETE"
+  origin: (origin, callback) => {
+    if(!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    }else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  } ,
+  methods: "GET, POST"
 }
 app.use(cors(corsOptions))
 app.use((req, res, next) => {
