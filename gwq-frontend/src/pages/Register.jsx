@@ -26,9 +26,9 @@ function Register (){
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
+        const backendHost = process.env.REACT_APP_BACKEND_HOST;
         try{
-            const response = await fetch('http://localhost:5010/users/register', {
+            const response = await fetch(`${backendHost}/users/register`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json' },
                 body: JSON.stringify(

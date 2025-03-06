@@ -33,9 +33,9 @@ function Home (){
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
+        const backendHost = process.env.REACT_APP_BACKEND_HOST;
         try{
-            const response = await fetch('http://localhost:5010/users/login', {
+            const response = await fetch(`${backendHost}/users/login`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json' },
             body: JSON.stringify(

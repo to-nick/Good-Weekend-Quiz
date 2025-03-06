@@ -123,9 +123,9 @@ function Submit(){
 
     const submitScore = async (event) => {
         event.preventDefault();
-
+        const backendHost = process.env.REACT_APP_BACKEND_HOST;
         try{
-            const response = await fetch('http://localhost:5010/data/submit-score', {
+            const response = await fetch(`${backendHost}/data/submit-score`, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,

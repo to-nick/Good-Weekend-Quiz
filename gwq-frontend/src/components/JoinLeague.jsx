@@ -32,9 +32,9 @@ function JoinLeague(){
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
+        const backendHost = process.env.REACT_APP_BACKEND_HOST;
         try{
-            const response = await fetch('http://localhost:5010/profile/join-league', {
+            const response = await fetch(`${backendHost}/profile/join-league`, {
                 method: 'POST',
                 headers: {
                     "Authorization": `Bearer ${token}`,

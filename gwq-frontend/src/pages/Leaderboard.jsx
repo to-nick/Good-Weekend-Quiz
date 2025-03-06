@@ -14,8 +14,9 @@ function Leaderboard (){
 
 
     const fetchLeagues = useCallback(async () => {
+        const backendHost = process.env.REACT_APP_BACKEND_HOST;
         try{
-            const leaguesQuery = await fetch(`http://localhost:5010/profile/display-leagues?userId=${userDetails.id}`, {
+            const leaguesQuery = await fetch(`${backendHost}/profile/display-leagues?userId=${userDetails.id}`, {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,

@@ -33,8 +33,9 @@ function CreateLeague () {
     
     const createNewLeague = async (event) => {
         event.preventDefault();
+        const backendHost = process.env.REACT_APP_BACKEND_HOST;
         try{
-            const response = await fetch('http://localhost:5010/profile/create-league', {
+            const response = await fetch(`${backendHost}/profile/create-league`, {
                 method: 'POST',
                 headers: {
                     "Authorization": `Bearer ${token}`,
