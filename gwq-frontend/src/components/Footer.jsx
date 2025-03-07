@@ -4,11 +4,7 @@ function Footer() {
 
     return(
         <div className="footer">
-                <ul className="footer-items">
-                    <li>Item 1</li>
-                    <li>Item 2</li>
-                    <li>Item 3</li>
-                </ul>
+                <p>&copy; All rights reserved weekend quiz submission</p>
         </div>
     )
 }

@@ -76,9 +76,8 @@
 }
 
 .nav-logo{
-    font-size: clamp(2.5rem, 4vw, 4rem);
     align-items: center;
-    height: 5rem;
+    height: 6vh
 }
 
 .nav-items{
