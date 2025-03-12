@@ -200,4 +200,30 @@ router.get('/display-leagues', authorisation, async function(req, res, next){
     
 })
 
+// Leave Leage Route
+
+router.delete('/leave-league', authorisation, async function(req, res, next){
+    const userId = req.query.userId;
+    const leagueId = req.query.leagueId;
+
+    try{ 
+        const leaveLeague = await req.db
+            .from('user_leagues')
+            .delete('*')
+            .where('user_Id', '=', userId)
+            .andWhere('league_id', '=', leagueId)
+            
+        res.status(200).json({
+            error: false,
+            message: `User removed from league ${leagueId}`
+        })
+    } catch (error){
+        res.status(500).json({
+            error: true,
+            message: `There was an error removing the user from league ${leagueId}: ${error.message}`
+
+        })
+    }
+})
+
 module.exports = router;
