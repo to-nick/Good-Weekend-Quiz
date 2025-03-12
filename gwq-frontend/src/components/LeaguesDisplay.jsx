@@ -86,7 +86,7 @@ function LeaguesDisplay() {
                     {responseSuccess || responseFailure ? ( 
                         <>
                         <p>{responseMessage}</p> 
-                        <button onClick={() => {closeMessage()}}>Close</button>
+                        <button className="close-button" onClick={() => {closeMessage()}}>Close</button>
                         </>
                     ) : (
                     <>

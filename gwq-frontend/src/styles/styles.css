@@ -583,7 +583,7 @@
 }
 
 .leagues-table{
-    font-size: clamp(1rem, 3vw, 5rem);
+    font-size: clamp(0.75rem, 3vw, 5rem);
     width: 100%;
     border: solid 4px black;
     margin: 1rem 0;
@@ -606,6 +606,16 @@
     background-color: rgb(123, 121, 121);
 }
 
+.leave-league-button{
+    font-size: clamp(1rem, 3vw, 3rem);
+    padding: 0.5rem;
+}
+
+.leave-league-button:hover{
+    background-color: rgb(158, 156, 156);
+    cursor: pointer;
+}
+
 .leave-league-warning{
     position: absolute;
     top: 50%;
@@ -615,6 +625,9 @@
     flex-direction: column;
     background-color: #50b3e0;
     padding: 3rem;
+    border: 3px, solid black;
+    box-shadow: 4px 3px 5px rgba(0, 0, 0, 0.8);
+    z-index: 11;
 }
 
 .leave-league-warning p{
@@ -631,6 +644,17 @@
 .leave-league-button-container button{
     font-size: clamp(1rem, 3vw, 3rem);
     padding: 0.5rem;
+    border: black 2px, solid;
+}
+
+.leave-league-button-container button:hover{
+    background-color: rgb(158, 156, 156);
+    cursor: pointer;
+}
+
+.close-button{
+    margin-top: 1rem;
+    font-size: clamp(1rem, 3vw, 3rem)
 }
 
 @media(max-width: 767px){
@@ -671,8 +695,18 @@
     }
 
     .create-league-container, .join-league-container{
-        width: 100%;
+        width: 95%;
         padding: 2rem 1rem;
+    }
+}
+
+@media(max-width: 350px){
+    .leagues-table th, td{
+        padding: 0rem;
+    }
+
+    .create-league-container, .join-league-container{
+        padding: 2rem 0.5rem;
     }
 }
 

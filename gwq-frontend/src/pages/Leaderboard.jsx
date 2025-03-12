@@ -61,15 +61,21 @@ function Leaderboard (){
                 }
             });
 
+            
+
             if(!leagueDataQuery.ok){
                 throw new Error(leagueDataQuery.message)
             }
             
             const data = await leagueDataQuery.json();
-            console.log(data);
-            const scores = data.combinedScores;
+
             
-            const highScore = data.highScore[0];
+            
+            const scores = data.combinedScores;
+
+            console.log("Scores:", scores);
+            
+            const highScore = data.highScore.length > 0 ? data.highScore[0] : { player_name: "N/A", week: "N/A", highScore: "N/A" };
             setHighestScore(highScore);
             setScoreData(scores);
         } catch(error){
