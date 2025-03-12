@@ -3,6 +3,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate, Link} from 'react-router-dom';
 import { AuthContext } from '../components/AuthContext';
 import { Eye, EyeOff } from "lucide-react";
+import Spinner from '../components/LoadingSpinner';
 
 function Home (){
 
@@ -11,6 +12,7 @@ function Home (){
     const [responseMessage, setResponseMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [logoutMessage, setLogoutMessage] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
     const { login } = useContext(AuthContext);
@@ -33,6 +35,7 @@ function Home (){
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setLoading(true);
         const backendHost = process.env.REACT_APP_BACKEND_HOST;
         try{
             const response = await fetch(`${backendHost}/users/login`, {
@@ -56,10 +59,12 @@ function Home (){
             } else if (response.ok){
                 login(token, userDetails);
                 navigate('/profile');
+
             }
         } catch (error){
             console.log('There was an error logging in:', error.message)
         }
+        setLoading(false);
     }
 
 
@@ -96,6 +101,7 @@ function Home (){
                     {showPassword ? <Eye className="eye" size={35} /> : <EyeOff className="eye-off" size={35}/>}
                     </button>
                 </div>
+                {loading ? <Spinner /> : null}
                 {loginFailed ? <div className="failed-login"><p>{responseMessage}</p></div> : null}
                 <button className='login-button' type='submit'>Login</button>
                 <p className='link-to-register'>Don't have an account? Please <Link to='/register'>register.</Link></p>

@@ -881,21 +881,20 @@
     width: auto;
 }
 
-.table-container{
-    display: flex;
-    justify-content: center;
-    background-color: white;
-    padding: 2rem;
-    margin: 2rem 2rem 0 2rem;
-    font-size: clamp(0.75rem, 3vw, 2rem);
-    box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.5);
-}
 
 .leaderboard-table{
     border: 3px solid black;
     border-collapse: collapse;
+    position: relative;
     margin-top: 2rem;
     width: 100%;
+}
+
+.leaderboard-spinner{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .leaderboard-table-head tr{
@@ -1001,5 +1000,14 @@
         gap: 1rem;
         margin-bottom: 1rem;
     }
+}
 
+@media (max-width: 406px) {
+    .dropdown-container{
+        flex-direction: column;
+    }
+    
+    .dropdown{
+        text-align: center;
+    }
 }

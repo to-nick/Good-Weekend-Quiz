@@ -2,6 +2,7 @@ import homeLogo from '../assets/images/home-image-removebg-preview.png';
 import React, { useState } from 'react';
 import { useNavigate, Link} from 'react-router-dom';
 import { Eye, EyeOff } from "lucide-react";
+import Spinner from '../components/LoadingSpinner';
 
 function Register (){
 
@@ -11,6 +12,7 @@ function Register (){
     const [registrationOk, setRegistrationOk] = useState(false);
     const [registrationMessage, setRegistrationMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
     
@@ -26,6 +28,7 @@ function Register (){
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setLoading(true);
         const backendHost = process.env.REACT_APP_BACKEND_HOST;
         try{
             const response = await fetch(`${backendHost}/users/register`, {
@@ -37,7 +40,6 @@ function Register (){
 
             const data = await response.json();
             
-
             if (!response.ok){
                 setResponseMessage(data.message)
                 setLoginFailed(true);
@@ -52,7 +54,9 @@ function Register (){
             }
         }catch (error){
             console.log("There was an error registering the user:", error.message)
+            
         }
+        setLoading(false);
     }
 
     return(
@@ -94,7 +98,7 @@ function Register (){
                     {showPassword ? <Eye className="eye" size={35} /> : <EyeOff className="eye-off" size={35}/>}
                     </button>
                 </div>
-                
+                {loading ? <Spinner /> : null}
                 {registrationOk ? <div className='registration-ok'><p>{registrationMessage}</p></div> : null}
                 {loginFailed ? <div className="failed-registration"><p>{responseMessage}</p></div> : null}
                 <button className='register-button' type='submit'>Register</button>

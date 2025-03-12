@@ -7,12 +7,10 @@ import LeaguesDisplay from "../components/LeaguesDisplay";
 
 function Profile (){
 
-    const { userDetails, loading } = useContext(AuthContext);
+    const { userDetails } = useContext(AuthContext);
 
 
     return(
-        loading ? <div>Loading...</div> 
-        :
         <div className="page-container">
             <div className="profile-container">
                 <div className="page-heading">

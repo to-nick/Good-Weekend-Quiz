@@ -1,5 +1,6 @@
 import { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../components/AuthContext';
+import Spinner from '../components/LoadingSpinner';
 
 
 function Submit(){
@@ -71,6 +72,7 @@ function Submit(){
     const [errorResponse, setErrorResponse] = useState('');
     const [submitSuccess, setSubmitSuccess] = useState(false);
     const [responseMessage, setResponseMessage] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const { userDetails, handleExpiredJWT } = useContext(AuthContext);
     const token = sessionStorage.getItem("token");
@@ -193,8 +195,8 @@ function Submit(){
                         <button className="score-submit-button" type="submit">Submit</button>
                         {submitError ? <p className='error-response'>{errorResponse}</p> : null}
                         {submitSuccess ? <p className='successful-response-message'>{responseMessage}</p> : null}
+                        {loading ? <Spinner /> : null}
                     </div>
-                    
                 </form>
             </div>
         </div>

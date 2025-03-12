@@ -1,5 +1,6 @@
 import { useContext, useState, useEffect } from 'react';
 import { AuthContext } from './AuthContext';
+import Spinner from '../components/LoadingSpinner';
 
 
 function CreateLeague () {
@@ -7,7 +8,9 @@ function CreateLeague () {
     const [leagueDetails, setLeagueDetails] = useState({leagueName: '', createdBy: ''})
     const [leagueID, setLeagueID] = useState(null);
     const [creationfailed, setCreationFailed] = useState(false);
-    const [leagueFailMessage, setLeagueFailMessage] = useState('')
+    const [leagueFailMessage, setLeagueFailMessage] = useState('');
+    const [loading, setLoading] = useState(false);
+
     const token = sessionStorage.getItem("token");
 
     const { userDetails, handleExpiredJWT } = useContext(AuthContext);
@@ -33,6 +36,7 @@ function CreateLeague () {
     
     const createNewLeague = async (event) => {
         event.preventDefault();
+        setLoading(true);
         const backendHost = process.env.REACT_APP_BACKEND_HOST;
         try{
             const response = await fetch(`${backendHost}/profile/create-league`, {
@@ -64,6 +68,7 @@ function CreateLeague () {
         console.log("Error while creating league:", error.message)
         handleExpiredJWT(error);
         }
+        setLoading(false);
     }
 
     return(
@@ -82,6 +87,7 @@ function CreateLeague () {
                         .join(' ')}>
                 </input>
                 <button className='create-league-button'>Create League</button>
+                {loading ? <Spinner /> : null}
             </form>
             <div>
                 {creationfailed ? <div><p className='create-league-failure'>{leagueFailMessage}</p></div> : null}

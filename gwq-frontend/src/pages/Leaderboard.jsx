@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext, useCallback} from 'react';
 import { AuthContext } from '../components/AuthContext';
+import Spinner from '../components/LoadingSpinner';
 
 function Leaderboard (){
 
@@ -8,6 +9,7 @@ function Leaderboard (){
     const [scoreData, setScoreData] = useState([]);
     const [selectedFormat, setSelectedFormat] = useState('Total Score');
     const [highestScore, setHighestScore] = useState({});
+    const [loading, setLoading] = useState(false);
 
     const { userDetails, handleExpiredJWT } = useContext(AuthContext);
     const token = sessionStorage.getItem('token')
@@ -52,6 +54,7 @@ function Leaderboard (){
     }
 
     const fetchLeagueData = useCallback(async () => {
+        setLoading(true);
         try{
             const leagueDataQuery = await fetch(`${backendHost}/data/scores?leagueId=${selectedLeague}`, {
                 method: "GET",
@@ -61,16 +64,12 @@ function Leaderboard (){
                 }
             });
 
-            
-
             if(!leagueDataQuery.ok){
                 throw new Error(leagueDataQuery.message)
             }
             
             const data = await leagueDataQuery.json();
 
-            
-            
             const scores = data.combinedScores;
 
             console.log("Scores:", scores);
@@ -82,6 +81,7 @@ function Leaderboard (){
             console.log('Failed to fetch leaderboard:', error.message);
             handleExpiredJWT(error);
         }
+        setLoading(false);
     }, [selectedLeague, token, handleExpiredJWT])
 
         console.log(scoreData);
@@ -126,7 +126,9 @@ function Leaderboard (){
                                 <option value={'Weekly Wins'}>Weekly Wins</option>
                             </select>
                         </div>
+                        {loading ? <Spinner className="leaderboard-spinner" /> : null}
                             <table className='leaderboard-table'>
+                            
                                 <thead id="leaderboard-table-head" className='leaderboard-table-head'>
                                     <tr>
                                         <th>Rank</th>
@@ -144,7 +146,7 @@ function Leaderboard (){
                                             })}
                                     </tbody>
                             </table>
-                            {leagues.length > 0 ? null : <p className='join-league-warning'>You must join or create a league to display the leaderboard</p>}
+                            {leagues.length > 0 ? null : <p className='join-league-warning'>You must join or create a league to display the leaderboard</p>}   
                     </div>
                     <div className='highscore-container'>
                         <h2>Highest single score of 2024:</h2>

@@ -9,7 +9,7 @@ function LeaguesDisplay() {
     const [leagueId, setLeagueId] = useState('');
     const [responseFailure, setresponseFailure] = useState(false);
     const [responseSuccess, setResponseSuccess] = useState(false);
-    const [responseMessage, setResponseMessage] = useState('')
+    const [responseMessage, setResponseMessage] = useState('');
 
 
     const { userDetails, handleExpiredJWT } = useContext(AuthContext)

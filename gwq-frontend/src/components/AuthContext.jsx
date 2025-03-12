@@ -7,7 +7,6 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [userDetails, setUserDetails] = useState({});
-    const [loading, setLoading] = useState(true);
 
     const navigate = useNavigate();
 
@@ -23,8 +22,6 @@ export const AuthProvider = ({ children }) => {
             setUserDetails({})
             setIsLoggedIn(false);
         }
-
-        setLoading(false);
     }, []);
 
     const login = (token, user) => {
