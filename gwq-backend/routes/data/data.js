@@ -2,22 +2,21 @@ const express = require('express');
 const router = express.Router();
 const authorisation = require('../../middleware/authorisation');
 
-//GET route for score retrieval
-
+//GET route for retreiving weekly and total user scores on the leaderboard page
 router.get('/scores', authorisation, async function(req, res, next){
     const leagueId = req.query.leagueId;
 
     try{
-
+        //Finding all user ID's of users within the requested league
         const leagueParticipants = await req.db
             .from('user_leagues')
             .select('user_id')
             .where('league_id', '=', leagueId)
 
+        //Mapping user ID's to get data on all of them
         const userIds = leagueParticipants.map((userId) => userId.user_id);
 
-        console.log('league participants:', userIds);
-
+        ////Handling edge case - No users in the rquested league
         if (userIds.length === 0) {
             return res.status(409).json({
                 error: true,
@@ -25,7 +24,9 @@ router.get('/scores', authorisation, async function(req, res, next){
             });
         }
 
-         const weeklyWinsTally = await req.db
+        /*Query to find the amount of weekly wins each user has had within their league. The weekly winner is the user who had the most
+          correct answers of any user for that week*/
+        const weeklyWinsTally = await req.db
             .from('submission')
             .select('player_name', 'user_id')
             .count('* as weekly_wins')
@@ -40,9 +41,8 @@ router.get('/scores', authorisation, async function(req, res, next){
             .groupBy('user_id', 'player_name')
             .orderBy('weekly_wins', 'desc')
 
-            console.log('Weekly wins:', weeklyWinsTally)
-
-
+        /*Query to find the total score of all users within the selected league. 
+          Total scores are the cumulative scores of a user across the whole year*/
         const totalScores = await req.db
             .from('submission')
             .select('player_name', 'user_id')
@@ -51,8 +51,7 @@ router.get('/scores', authorisation, async function(req, res, next){
             .groupBy('player_name', 'user_id')
             .orderBy('totalScore', 'desc')
 
-            console.log('total scores:', totalScores);
-
+        //Combining the total scores and weekly winner tally's into one object
         const combinedScores = totalScores.map((score) => {
             const weeklyWinsEntry = weeklyWinsTally.find((entry) => entry.user_id === score.user_id);
             console.log('weekly wins entry:', weeklyWinsEntry)
@@ -62,8 +61,7 @@ router.get('/scores', authorisation, async function(req, res, next){
                }
         })
 
-            console.log('Combined scores:', combinedScores)
-
+        //Query to find the highest single week score of the year, by a users
         const highScore = await req.db
             .from('submission')
             .select('user_id', 'player_name', 'week', 'score as highScore')
@@ -71,8 +69,6 @@ router.get('/scores', authorisation, async function(req, res, next){
             .orderBy('score', 'desc')
             .limit(1);
             
-        console.log('High Score:', highScore)
-
         res.status(200).json(
             {
                 combinedScores, 
@@ -88,7 +84,7 @@ router.get('/scores', authorisation, async function(req, res, next){
     }
 })
 
-//Post route for score submission
+//Post route for weekly score submission
 
 router.post('/submit-score', authorisation, async function(req, res, next){
     const weekNumber = req.body.week;
@@ -98,6 +94,7 @@ router.post('/submit-score', authorisation, async function(req, res, next){
     const year = new Date().getFullYear();
     const name = req.body.name;
 
+    ////Handling edge case - all fields completed
     if(!score || !players || !userId || !weekNumber || !year || !name){
         res.status(400).json({
             error: true,
@@ -109,8 +106,7 @@ router.post('/submit-score', authorisation, async function(req, res, next){
     try{
         const scoreSubmission = {user_id: userId, week: weekNumber, year: year, score: score, number_of_players: players, player_name: name};
 
-        console.log(scoreSubmission);
-
+        //Ensuring the user has not alredy submitted a score for the current week
         const duplicateCheck = await req.db
             .from('submission')
             .select('*')
@@ -125,6 +121,7 @@ router.post('/submit-score', authorisation, async function(req, res, next){
             return;
         }
 
+        //Inserting the score into the database
         const submit = await req.db
             .from('submission')
             .insert(scoreSubmission)

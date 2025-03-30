@@ -24,6 +24,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//Setting cors parameters
 const allowedOrigins = ['https://good-weekend-quiz-frontend.onrender.com' ,'http://localhost:3000']
 
 const corsOptions = {
@@ -42,20 +43,10 @@ app.use((req, res, next) => {
   next()
   });
 
+//Routes for use across the backend
 app.use('/data', dataRouter);
 app.use('/users', usersRouter);
 app.use('/profile', profileRouter);
-
-app.get("/knex", function (req, res, next) {
-  req.db
-  .raw("SELECT VERSION()")
-  .then((version) => console.log(version[0][0]))
-  .catch((err) => {
-    console.log(err);
-    throw err;
-  });
-  res.send("Version Logged successfully");
-  });
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

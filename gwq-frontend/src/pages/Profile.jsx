@@ -4,7 +4,7 @@ import CreateLeague from "../components/CreateLeague";
 import JoinLeague from "../components/JoinLeague";
 import LeaguesDisplay from "../components/LeaguesDisplay";
 
-
+//Profile page
 function Profile (){
 
     const { userDetails } = useContext(AuthContext);

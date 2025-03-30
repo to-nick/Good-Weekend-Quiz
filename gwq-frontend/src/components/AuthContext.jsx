@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 
-
+//Context to carry user details across pages
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
     const [userDetails, setUserDetails] = useState({});
 
     const navigate = useNavigate();
-
+    //Retreiving JWT and JWT from session storage
     useEffect(() => {
         const token = sessionStorage.getItem("token");
         const storedUser = sessionStorage.getItem("user");
@@ -24,6 +24,7 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
+    //Function to store JWT and user details in session storage
     const login = (token, user) => {
         sessionStorage.setItem("token", token);
         sessionStorage.setItem("user", JSON.stringify(user));
@@ -32,6 +33,7 @@ export const AuthProvider = ({ children }) => {
         setIsLoggedIn(true);
     };
 
+    //Removing JWT and user details upon log out
     const logout = () => {
         sessionStorage.removeItem("token");
         sessionStorage.removeItem("user");
@@ -39,6 +41,7 @@ export const AuthProvider = ({ children }) => {
         setIsLoggedIn(false);
     };
 
+    //Function to display error message on login screen if a user has been automatically logged out due to JWT expiration
     const handleExpiredJWT = (error) => {
         console.error("Fetch Error:", error)
 

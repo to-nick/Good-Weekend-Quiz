@@ -2,6 +2,7 @@ import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "./AuthContext";
 import Spinner from '../components/LoadingSpinner';
 
+//Component to join an existing league with a league ID
 function JoinLeague(){
 
     const [joinDetails, setJoinDetails] = useState({leagueId: '', userId: ''})
@@ -12,6 +13,7 @@ function JoinLeague(){
     const { userDetails, handleExpiredJWT } = useContext(AuthContext);
     const token = sessionStorage.getItem("token");
 
+    //Getting user details immeditaly upon page load
     useEffect(() => {
         if(userDetails.id){
             setJoinDetails((prevDetails) => ({
@@ -28,7 +30,6 @@ function JoinLeague(){
         }))
     }
 
-    console.log(joinDetails);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -58,7 +59,7 @@ function JoinLeague(){
                 setJoinLeaguefailed(false);
                 setResponseMessage(data.message);
             }
-
+            //Resetting league id to an empty string after a successful join 
             setJoinDetails((prevDetails) => ({
                 ...prevDetails,
                 leagueId: ''
@@ -69,7 +70,6 @@ function JoinLeague(){
         }
         setLoading(false);
     }
-
 
     return (
         <div className="join-league-container">

@@ -4,15 +4,13 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 //Register Route
-
 router.post('/register', async function(req, res, next) {
 
   const name = req.body.name;
   const email = req.body.email;
   const password = req.body.password;
 
-  console.log( `Name: ${name}, Email: ${email}, Password: ${password} `)
-
+  //Handling edge case - all fields completed
   if(!name || !email || !password){
     res.status(400).json({
       error: true,
@@ -25,27 +23,28 @@ router.post('/register', async function(req, res, next) {
     const user = await req.db('users')
       .where('email', '=', email).first();
 
-    console.log(user);
-
+    //Checking to see if the user email has already been registered
     if (user){
       res.status(409).json({
         error: true,
         message: 'User email already exists'
       });
       return;
+    //Hashing user password for security
     } else if(!user){
       const saltRounds = 10;
       const hash = bcrypt.hashSync(password, saltRounds);
       
       const newUser = {name: name, email: email, password: hash};
-
+    
+    //Adding new user into the database
     await req.db
       .from('users')
       .insert(newUser)
       
       res.status(200).json({
         error: false,
-        message: 'New user created'
+        message: 'New user created! Directing to login page....'
       })
     }
   } catch(error){
@@ -58,13 +57,11 @@ router.post('/register', async function(req, res, next) {
 });
 
 // LOGIN ROUTE
-
 router.post('/login', async function(req, res, next) {
   const email =  req.body.email;
   const password = req.body.password;
 
-  console.log( `Backend reached: ${email}, ${password}`)
-
+  //Handling edge case - all fields completed
   if (!email || !password){
     res.status(400).json({
       error: true,
@@ -76,9 +73,8 @@ router.post('/login', async function(req, res, next) {
     const user = await req.db
       .from('users')
       .where('email', "=", email).first();
-
-      console.log(user);
-
+      
+      //handling error if user does not exist
       if(!user){
         res.status(401).json({
           error: true,
@@ -87,14 +83,18 @@ router.post('/login', async function(req, res, next) {
         return;
       }
 
+      //Comparing user password input with database password
       const isValidPassword = await bcrypt.compare(password, user.password);
 
+      //Error if password is not matching
       if (!isValidPassword){
           res.status(401).json({
           error: true,
           message: "Incorrect email or password"
           });
         return;
+
+      //Granting a JSON Web Token if user password matches database password
       } else if (isValidPassword){
         const expiresIn = 3600;
         const exp = Math.floor(Date.now() / 1000) + expiresIn;

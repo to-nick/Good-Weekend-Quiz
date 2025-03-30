@@ -4,6 +4,7 @@ import { useNavigate, Link} from 'react-router-dom';
 import { Eye, EyeOff } from "lucide-react";
 import Spinner from '../components/LoadingSpinner';
 
+// Register page 
 function Register (){
 
     const [formData, setFormData] = useState({name: '', email: '', password: ''});
@@ -23,9 +24,7 @@ function Register (){
             [event.target.name]: event.target.value
             }));
         }
-
-        console.log(formData);
-
+    //Submitiing user registration details to the backend
     const handleSubmit = async (event) => {
         event.preventDefault();
         setLoading(true);
@@ -48,6 +47,7 @@ function Register (){
                 console.log(data);
                 setRegistrationOk(true);
                 setRegistrationMessage(data.message);
+                //A two second pause with a success message, before navigating to the login page
                 setTimeout(() => {
                     navigate('/')
                 }, 2000);
@@ -99,6 +99,7 @@ function Register (){
                     </button>
                 </div>
                 {loading ? <Spinner /> : null}
+                {/* Fail or success messages for registration */}
                 {registrationOk ? <div className='registration-ok'><p>{registrationMessage}</p></div> : null}
                 {loginFailed ? <div className="failed-registration"><p>{responseMessage}</p></div> : null}
                 <button className='register-button' type='submit'>Register</button>

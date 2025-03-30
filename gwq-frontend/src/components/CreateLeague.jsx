@@ -2,7 +2,7 @@ import { useContext, useState, useEffect } from 'react';
 import { AuthContext } from './AuthContext';
 import Spinner from '../components/LoadingSpinner';
 
-
+//Component to create a new league
 function CreateLeague () {
 
     const [leagueDetails, setLeagueDetails] = useState({leagueName: '', createdBy: ''})
@@ -15,6 +15,7 @@ function CreateLeague () {
 
     const { userDetails, handleExpiredJWT } = useContext(AuthContext);
 
+    //Getting user details immeditaly upon page load
     useEffect(() => {
         if(userDetails.id){
             setLeagueDetails((prevDetails) => ({
@@ -31,9 +32,7 @@ function CreateLeague () {
             [event.target.name]: event.target.value}))
     }
 
-    console.log(leagueDetails);
-
-    
+    //Backend request to create a new league with the "leagueDetails"
     const createNewLeague = async (event) => {
         event.preventDefault();
         setLoading(true);
@@ -52,18 +51,18 @@ function CreateLeague () {
             
             const data = await response.json();
 
+            //Error handling if backend response is not ok
             if(!response.ok){
                 setLeagueFailMessage(data.message)
                 setCreationFailed(true);
                 throw new Error(data.message);
                 
             }
+            //setting league ID to display to user if league creation is successful
             else if(response.ok){
                 setLeagueID(data.leagueID)
                 setCreationFailed(false)
             }
-
-            console.log(data);
         } catch (error){
         console.log("Error while creating league:", error.message)
         handleExpiredJWT(error);
@@ -81,12 +80,14 @@ function CreateLeague () {
                 placeholder="League Name" 
                 name="leagueName" onChange={handleChange} 
                 type="text" 
+                //Ensuring that the first letter of every word in the league name is capitalized
                 value={leagueDetails.leagueName
                         .split(' ')
                         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
                         .join(' ')}>
                 </input>
                 <button className='create-league-button'>Create League</button>
+                {/* Spinner is the leading effect */}
                 {loading ? <Spinner /> : null}
             </form>
             <div>

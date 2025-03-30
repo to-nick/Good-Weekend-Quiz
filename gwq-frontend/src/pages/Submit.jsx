@@ -12,7 +12,8 @@ function Submit(){
             week: "",
             name: ""
         });
-
+    
+    //Variable containing all week periods of the year for score submissions
     const weeks = [
         "Sat Jan 04 2025 - Fri Jan 10 2025",
         "Sat Jan 11 2025 - Fri Jan 17 2025",
@@ -77,6 +78,7 @@ function Submit(){
     const { userDetails, handleExpiredJWT } = useContext(AuthContext);
     const token = sessionStorage.getItem("token");
 
+    //Setting available user details upon load
     useEffect(() => {
         if(userDetails){
             setSubmissionDetails((prevDetails)=> ({
@@ -86,20 +88,25 @@ function Submit(){
         }
     },[userDetails]);
 
-
+    //Function for formatting date strings
     const parseDate = (dateString) => {
         return new Date(dateString);
     }
 
+    //Function to find the current week from the "weeks' array
     const findCurrentWeek = () => {
         const currentDate = new Date();
         for (let week of weeks){
+            //Splitting each period into a start and end date
             const [startDateString, endDateString] = week.split(' - ');
 
+            //Formatting the dates for comparison
             const startDate = parseDate(startDateString);
             const endDate = parseDate(endDateString);
+            //Ensuring the end date includes the whole day eg the week starts at midnight on saturday and ends at 23:59:59 on friday
             endDate.setHours(23, 59, 59, 999)
 
+            //Finding and returning the week which meets the criteria
             if (currentDate >= startDate && currentDate <= endDate){
                 return week;
             }
@@ -122,7 +129,7 @@ function Submit(){
             [event.target.name]: event.target.value
         }));
     }
-
+    //Submitting the score to the backend
     const submitScore = async (event) => {
         event.preventDefault();
         const backendHost = process.env.REACT_APP_BACKEND_HOST;
@@ -157,8 +164,6 @@ function Submit(){
             
         }
     };
-
-    console.log(submissionDetails)
     
     return(
         <div className='page-container'>
@@ -193,6 +198,7 @@ function Submit(){
                     </div>
                     <div className='button-container'>
                         <button className="score-submit-button" type="submit">Submit</button>
+                        {/* Submission response messages */}
                         {submitError ? <p className='error-response'>{errorResponse}</p> : null}
                         {submitSuccess ? <p className='successful-response-message'>{responseMessage}</p> : null}
                         {loading ? <Spinner /> : null}

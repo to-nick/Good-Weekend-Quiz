@@ -17,6 +17,7 @@ function Home (){
     const navigate = useNavigate();
     const { login } = useContext(AuthContext);
 
+    //Displaying error message on login screen if a user has been automatically logged out due to JWT expiration
     useEffect(() => {
         const message = sessionStorage.getItem("logoutMessage");
         
@@ -33,6 +34,7 @@ function Home (){
             }));
         }
 
+    //User login function
     const handleSubmit = async (event) => {
         event.preventDefault();
         setLoading(true);
@@ -98,6 +100,7 @@ function Home (){
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                     >
+                    {/* Show/hide password */}
                     {showPassword ? <Eye className="eye" size={35} /> : <EyeOff className="eye-off" size={35}/>}
                     </button>
                 </div>

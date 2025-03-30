@@ -3,12 +3,12 @@ import { useContext, useState } from 'react';
 import { AuthContext } from './AuthContext';
 import Logo from '../assets/images/q-high-resolution-logo-removebg-preview.png';
 
+//Navbar component
 function Navbar(){
-
     const [navIsActive, setNavIsActive] = useState(false);
-
     const { isLoggedIn, logout } = useContext(AuthContext);
 
+    //To expand and collapse the nav menu on smaller screens
     const activateHamburgerMenu = () => {
         setNavIsActive(prevState => !prevState)
     }
@@ -36,7 +36,6 @@ function Navbar(){
                 <span className='bar'></span>
                 <span className='bar'></span>
             </div>
-            
         </nav>
     )
 }

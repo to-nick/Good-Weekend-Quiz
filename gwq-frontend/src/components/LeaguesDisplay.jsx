@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext, useCallback } from "react";
 import { AuthContext } from "./AuthContext";
 
-
+//Component to display the leagues a player is in on the profile page
 function LeaguesDisplay() {
 
     const [leagueDetails, setLeagueDetials] = useState([]);
@@ -12,10 +12,11 @@ function LeaguesDisplay() {
     const [responseMessage, setResponseMessage] = useState('');
 
 
-    const { userDetails, handleExpiredJWT } = useContext(AuthContext)
+    const { userDetails, handleExpiredJWT } = useContext(AuthContext);
     const token = sessionStorage.getItem("token");
     const backendHost = process.env.REACT_APP_BACKEND_HOST;
 
+    //Use callback used to only run the function when dependancy variables change rather than on every re-render
     const fetchLeagues = useCallback(async () => {    
         console.log('Backend Host:', backendHost)
         try{
@@ -44,6 +45,7 @@ function LeaguesDisplay() {
         }
     }, [fetchLeagues, userDetails.id])
 
+    //Function to allow users to leave a league
     const leaveLeague = async (leagueId) => {
         setLeaveLeagueWarning(true);
         try{
@@ -56,7 +58,6 @@ function LeaguesDisplay() {
         });
         const data = await deleteResponse.json();
 
-        console.log(data);
         setResponseMessage(data.message)
 
         if(!deleteResponse.ok){
@@ -72,6 +73,7 @@ function LeaguesDisplay() {
         }
     }
 
+    //Function to close warning message upon trying to leave a league
     const closeMessage = () =>{
         setResponseSuccess(false);
         setresponseFailure(false);
@@ -81,6 +83,8 @@ function LeaguesDisplay() {
     return(
         <div className='leagues-container'>
             <h3>Your leagues:</h3>
+            {/* Leave league warning container  */}
+            {/* Multiple ternay operators to determine what is rendered for the warning  */}
             {leaveLeagueWarning ? (
                 <div className="leave-league-warning">
                     {responseSuccess || responseFailure ? ( 
@@ -106,6 +110,7 @@ function LeaguesDisplay() {
                 </div> 
             ) : 
                  null }
+            {/* Table display of leagues */}
             <table className='leagues-table'>
                 <thead id="leagues-table-head">
                     <tr>
