@@ -1,3 +1,5 @@
+CREATE DATABASE good_weekend_quiz; 
+
 USE good_weekend_quiz;
 
 CREATE TABLE users (
