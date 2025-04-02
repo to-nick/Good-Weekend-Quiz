@@ -121,12 +121,4 @@ router.post('/login', async function(req, res, next) {
 });
 
 
-//Ping Route for continuous uptime
-router.get('/ping', async function (res, req, next){
-  res.status(200).json({
-    error: false,
-    message: "ping received"
-  })
-})
-
 module.exports = router;
